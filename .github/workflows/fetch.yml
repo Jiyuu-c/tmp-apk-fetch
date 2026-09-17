@@ -1,0 +1,23 @@
+name: fetch
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download XAPK
+        run: |
+          curl -sSL -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36" -o app.xapk "$REAL_URL"
+          ls -la app.xapk
+          file app.xapk
+      - name: Extract
+        run: |
+          mkdir -p out && cd out && unzip -o -q ../app.xapk || true
+          ls -la
+          find . -name "*.apk" -exec ls -la {} \;
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vipliner-apk
+          path: out/
+          retention-days: 1
+          compression-level: 0
